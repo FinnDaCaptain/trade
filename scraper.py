@@ -35,27 +35,27 @@ private_rate_limiter = RateLimiter(max_requests=40, time_window=10)  # Private e
 hf_rate_limiter = RateLimiter(max_requests=1000, time_window=10)     # High-frequency endpoints: Assuming 1000 requests per 10 seconds (adjust accordingly)
 
 def fetch_market_data(market, rate_limiter, interval='1min'):
-    rate_limiter.wait()  # Wait for the rate limiter before making a request
+    rate_limiter.wait()
 
     # Fetch historical klines (candlestick) data
     klines_endpoint = f"/api/v1/market/candles?type={interval}&symbol={market}"
     klines_response = requests.get(api_url + klines_endpoint)
     klines_data = json.loads(klines_response.text)
 
-    rate_limiter.wait()  # Wait for the rate limiter before making a request
+    rate_limiter.wait()
 
     # Fetch historical trades data
     trades_endpoint = f"/api/v1/market/histories?symbol={market}"
     trades_response = requests.get(api_url + trades_endpoint)
     trades_data = json.loads(trades_response.text)
 
-    rate_limiter.wait()  # Wait for the rate limiter before making a request
+    rate_limiter.wait()
 
-    # Fetch level 2 order book data
-    order_book_endpoint = f"/api/v1/market/orderbook/level2_20?symbol={market}"
+    # Fetch level 3 order book data
+    order_book_endpoint = f"/api/v1/market/orderbook/level3?symbol={market}"
     order_book_response = requests.get(api_url + order_book_endpoint)
     order_book_data = json.loads(order_book_response.text)
-    
+
     return klines_data, trades_data, order_book_data
 
 def save_data_as_cupy_array(data, market, interval='1min'):
